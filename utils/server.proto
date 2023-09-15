@@ -1,0 +1,31 @@
+syntax = "proto3";
+option go_package = "github.com/zhongshixi/grpc-go-playground/gen/service";
+package service;
+
+// The request message containing the user's name.
+message EventRequest {
+    int64 order_id =1 ;
+    string data = 2;
+}
+
+message EventResponse {
+    string order_id = 1 ;
+    string data = 2;
+}
+
+message EventRequestResponse {
+    int64 count = 1;
+    int64 total_size = 2;
+}
+
+service EventService {
+    rpc HandleRequest (EventRequest) returns (EventResponse) {}
+    rpc HandleClientStream(stream EventRequest) returns(EventRequestResponse) {}
+    // rpc HandleBidiStream(stream EventRequest) returns (stream EventResponse) {}
+}
+  
+
+
+
+
+
