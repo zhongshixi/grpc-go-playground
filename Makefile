@@ -18,15 +18,14 @@ connect-server-http2:
 	go run ./cmd/connect-server-http2/main.go --addr :7002
 
 connect-client-http1:
-	go run ./cmd/connect-client-http1/main.go --host  http://localhost:7001 --requests 1000
+	go run ./cmd/connect-client-http1/main.go --host  http://localhost:7001 --requests 10000
 
 connect-client-http2:
-	go run ./cmd/connect-client-http2/main.go --host http://localhost:7002 --requests 1000
+	go run ./cmd/connect-client-http2/main.go --host http://localhost:7002 --requests 10000
 
 connect-stream-client:
-	go run ./cmd/connect-client-stream/main.go --host  http://localhost:7002 --requests 1000
+	go run ./cmd/connect-client-stream/main.go --host  http://localhost:7002 --requests 10000
 	
-
 twirp-client-http1:
 	go run ./cmd/twirp-client-http1/main.go --host http://localhost:7003 --requests 1000
 

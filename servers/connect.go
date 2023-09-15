@@ -59,15 +59,11 @@ func (s *ConnectEventService) HandleClientStream(ctx context.Context, stream *co
 	count := int64(0)
 
 	for stream.Receive() {
+		//Note: receiver side should have as much less blocking calls as possible
 		count = count + 1
 		req := stream.Msg()
 		resp.Count++
 		resp.TotalSize = resp.TotalSize + int64(len(req.Data))
-		if count == 1 {
-			slog.Info("Stream Request", slog.Any("header", stream.RequestHeader()))
-		}
-
-		slog.Info("Stream Received", slog.Any("request", req))
 	}
 
 	if e := stream.Err(); e != nil {
