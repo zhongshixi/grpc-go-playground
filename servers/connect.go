@@ -3,66 +3,51 @@ package servers
 import (
 	"context"
 	"fmt"
-	"log"
-	"sync/atomic"
 	"time"
 
 	"log/slog"
 
 	"connectrpc.com/connect"
-	"github.com/zhongshixi/grpc-go-playground/gen/service"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto"
 )
 
 type ConnectEventService struct {
-	count atomic.Int64
-	debug bool
 }
 
-func NewConnectEventService(debug bool) *ConnectEventService {
-	return &ConnectEventService{
-		debug: debug,
-	}
+func NewConnectEventService() *ConnectEventService {
+	return &ConnectEventService{}
 }
 
 func (s *ConnectEventService) HandleRequest(
 	ctx context.Context,
-	req *connect.Request[service.EventRequest],
-) (*connect.Response[service.EventResponse], error) {
-	s.count.Add(1)
+	req *connect.Request[proto.EventRequest],
+) (*connect.Response[proto.EventResponse], error) {
 
-	if s.debug {
-		slog.Info("Event Request Recevied",
-			slog.Any("id", req.Msg.OrderId),
-			slog.String("method", req.HTTPMethod()),
-			slog.Any("peer", req.Peer()),
-			slog.Any("spec", req.Spec()),
-			slog.Any("headers", req.Header()))
-	}
+	slog.Info("Event Request Recevied",
+		slog.Any("id", req.Msg.OrderId),
+		slog.String("method", req.HTTPMethod()),
+		slog.Any("peer", req.Peer()),
+		slog.Any("spec", req.Spec()),
+		slog.Any("headers", req.Header()))
 
-	res := connect.NewResponse(&service.EventResponse{
+	res := connect.NewResponse(&proto.EventResponse{
 		OrderId: fmt.Sprintf("Hello, %d!", req.Msg.OrderId),
 	})
 
 	return res, nil
 }
 
-func (s *ConnectEventService) GetCount() int64 {
-	return s.count.Load()
-}
+func (s *ConnectEventService) HandleClientStream(ctx context.Context, stream *connect.ClientStream[proto.EventRequest]) (*connect.Response[proto.EventRequestResponse], error) {
 
-func (s *ConnectEventService) HandleClientStream(ctx context.Context, stream *connect.ClientStream[service.EventRequest]) (*connect.Response[service.EventRequestResponse], error) {
-
-	if s.debug {
-		slog.Info("Stream Start",
-			slog.Any("request_header", stream.RequestHeader()),
-			slog.Any("peer", stream.Peer()),
-			slog.Any("spec", stream.Spec()),
-			slog.Any("err", stream.Err()))
-	}
+	slog.Info("Stream Start",
+		slog.Any("request_header", stream.RequestHeader()),
+		slog.Any("peer", stream.Peer()),
+		slog.Any("spec", stream.Spec()),
+		slog.Any("err", stream.Err()))
 
 	startTime := time.Now()
 
-	resp := &service.EventRequestResponse{
+	resp := &proto.EventRequestResponse{
 		Count:     0,
 		TotalSize: 0,
 	}
@@ -78,12 +63,11 @@ func (s *ConnectEventService) HandleClientStream(ctx context.Context, stream *co
 		req := stream.Msg()
 		resp.Count++
 		resp.TotalSize = resp.TotalSize + int64(len(req.Data))
-
 		if count == 1 {
-			log.Println("Stream response headers: ", stream.RequestHeader())
+			slog.Info("Stream Request", slog.Any("header", stream.RequestHeader()))
 		}
 
-		log.Println("Stream Recv", req.OrderId)
+		slog.Info("Stream Received", slog.Any("request", req))
 	}
 
 	if e := stream.Err(); e != nil {

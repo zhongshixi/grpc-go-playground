@@ -8,8 +8,8 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/zhongshixi/grpc-go-playground/data"
-	"github.com/zhongshixi/grpc-go-playground/gen/service"
-	"github.com/zhongshixi/grpc-go-playground/gen/service/serviceconnect"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto/protoconnect"
 	"github.com/zhongshixi/grpc-go-playground/utils"
 )
 
@@ -20,7 +20,7 @@ func main() {
 
 	slog.Info("Initialize Connect Client", slog.Any("host", *host), slog.Any("request", *requests))
 
-	client := serviceconnect.NewEventServiceClient(
+	client := protoconnect.NewEventServiceClient(
 		utils.NewDefaultHTTP2Client(),
 		*host, // in production example, it is https
 		// connect.WithGRPC(),
@@ -28,7 +28,7 @@ func main() {
 	)
 
 	function := func(id int64) (int64, error) {
-		req := connect.NewRequest(&service.EventRequest{
+		req := connect.NewRequest(&proto.EventRequest{
 			OrderId: id,
 			Data:    data.Bid,
 		})

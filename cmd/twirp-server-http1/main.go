@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log/slog"
 
-	"github.com/zhongshixi/grpc-go-playground/gen/service"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto"
 	"github.com/zhongshixi/grpc-go-playground/servers"
 	"github.com/zhongshixi/grpc-go-playground/utils"
 )
@@ -16,8 +16,8 @@ func main() {
 
 	slog.Info("Initialize Twrip  HTTP 1 Server", slog.Any("Addr", *addr))
 
-	svc := servers.NewTwripEventService(true)
-	twrpSvc := service.NewEventServiceServer(svc)
+	svc := servers.NewTwripEventService()
+	twrpSvc := proto.NewEventServiceServer(svc)
 	server := utils.NewDefaultHTTPServer(twrpSvc.PathPrefix(), twrpSvc, *addr)
 
 	if err := server.ListenAndServe(); err != nil {

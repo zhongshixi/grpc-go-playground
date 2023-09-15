@@ -6,20 +6,20 @@ import (
 	"log/slog"
 
 	"github.com/zhongshixi/grpc-go-playground/data"
-	"github.com/zhongshixi/grpc-go-playground/gen/service"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto"
 	"github.com/zhongshixi/grpc-go-playground/utils"
 )
 
 func main() {
 	slog.Info("Initialize Twrip Client", slog.Any("endpoint addr", ":7004"))
 
-	client := service.NewEventServiceProtobufClient(
+	client := proto.NewEventServiceProtobufClient(
 		"http://localhost:7004",
 		utils.NewDefaultHTTP2Client(),
 	)
 
 	utils.SpikeWithFunc(1000, func(id int64) (int64, error) {
-		_, err := client.HandleRequest(context.Background(), &service.EventRequest{
+		_, err := client.HandleRequest(context.Background(), &proto.EventRequest{
 			OrderId: id,
 			Data:    data.Bid,
 		})

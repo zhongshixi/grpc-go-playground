@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log/slog"
 
-	"github.com/zhongshixi/grpc-go-playground/gen/service/serviceconnect"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto/protoconnect"
 	"github.com/zhongshixi/grpc-go-playground/servers"
 	"github.com/zhongshixi/grpc-go-playground/utils"
 )
@@ -15,8 +15,8 @@ func main() {
 
 	slog.Info("Initialize Connect HTTP 2 Server", slog.Any("Addr", *addr))
 
-	service := servers.NewConnectEventService(true)
-	path, handler := serviceconnect.NewEventServiceHandler(service)
+	service := servers.NewConnectEventService()
+	path, handler := protoconnect.NewEventServiceHandler(service)
 	server := utils.NewDefaultHTTP2Server(path, handler, *addr)
 
 	if err := server.ListenAndServe(); err != nil {

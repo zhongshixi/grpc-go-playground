@@ -11,8 +11,8 @@ import (
 	"log/slog"
 
 	"github.com/zhongshixi/grpc-go-playground/data"
-	"github.com/zhongshixi/grpc-go-playground/gen/service"
-	"github.com/zhongshixi/grpc-go-playground/gen/service/serviceconnect"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto"
+	"github.com/zhongshixi/grpc-go-playground/gen/proto/protoconnect"
 	"github.com/zhongshixi/grpc-go-playground/utils"
 )
 
@@ -24,7 +24,7 @@ func main() {
 
 	slog.Info("Initialize Connect Stream Client", slog.Any("host", *host), slog.Any("request", *requests))
 
-	client := serviceconnect.NewEventServiceClient(
+	client := protoconnect.NewEventServiceClient(
 		utils.NewDefaultHTTP2Client(),
 		*host, // in production example, it is https
 		// connect.WithGRPC(),
@@ -37,7 +37,7 @@ func main() {
 	utils.SpikeWithFunc(*requests, func(id int64) (int64, error) {
 		mutex.Lock()
 		defer mutex.Unlock()
-		err := stream.Send(&service.EventRequest{
+		err := stream.Send(&proto.EventRequest{
 			OrderId: id,
 			Data:    data.Bid,
 		})

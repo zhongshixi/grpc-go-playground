@@ -11,5 +11,5 @@ type HandlerInterceptor struct {
 
 func (h *HandlerInterceptor) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	h.Handler.ServeHTTP(rw, req)
-	slog.Info("request intercepted", slog.Any("protocol", req.Proto))
+	slog.Info("Intercept Request", slog.Any("protocol", req.Proto))
 }
